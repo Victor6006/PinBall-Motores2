@@ -1,25 +1,30 @@
 using UnityEngine;
+using UnityEngine.InputSystem; // Importante!
 
 public class Flippers : MonoBehaviour
 {
     public enum FlipperSide { Left, Right }
     public FlipperSide side;
 
-    public float motorSpeed = 1000f; // Speed at which the flipper moves
-    public float motorTorque = 10000f; // Max force applied
+    public float motorSpeed = 1000f;
+    public float motorTorque = 10000f;
 
     private HingeJoint2D hinge;
 
     void Start()
     {
         hinge = GetComponent<HingeJoint2D>();
-        hinge.useMotor = true; // Ensure motor is enabled
+        hinge.useMotor = true;
     }
 
     void Update()
     {
-        bool isPressed = (side == FlipperSide.Left && Input.GetKey(KeyCode.LeftArrow)) ||
-                         (side == FlipperSide.Right && Input.GetKey(KeyCode.RightArrow));
+        var keyboard = Keyboard.current;
+
+        if (keyboard == null) return; // Segurança para evitar erros em plataformas sem teclado
+
+        bool isPressed = (side == FlipperSide.Left && keyboard.rightArrowKey.isPressed) ||
+                         (side == FlipperSide.Right && keyboard.leftArrowKey.isPressed);
 
         JointMotor2D motor = hinge.motor;
 
